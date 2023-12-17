@@ -1,14 +1,12 @@
 "use client"
-import { Donegal_One } from "next/font/google"
-import { useState } from "react"
+import { FormEvent, useState } from "react"
 
 type task = {
   id: number
   title: string
-  end_date: string 
+  end_date: string
   done: boolean
 }
-
 
 const demoTasks: task[] = [
   {
@@ -20,7 +18,7 @@ const demoTasks: task[] = [
   {
     id: 2,
     title: "本を読む",
-    end_date: "2023-12-30",
+    end_date: "2023-06-30",
     done: true,
   },
   {
@@ -33,40 +31,41 @@ const demoTasks: task[] = [
 
 export default function Page() {
 
-const [tasks,setTasks] = useState<task[]>(demoTasks)
+  const [tasks, setTasks] = useState<task[]>(demoTasks)
+
+  function addTask(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+    
+    const formData = new FormData(event.currentTarget)
+    
+    const title = formData.get("title") as string // 牛乳を買う
+    const endDate = formData.get("end_date") as string // YYYY-MM-DD
+    
+    setTasks([...tasks, {
+      id: tasks.length + 1,
+      title: title,
+      end_date: endDate,
+      done: false,
+    }])
+  }
 
   return (
-    <div>
-     <h1>ToDo管理アプリ</h1>
+    <div className="p-8">
+      <h1 className="mb-4">ToDo管理アプリ</h1>
 
-     <form className="mb-8 space-4" onSubmit={()}>
-      <input type={"text"} name={"title"} />
-      <input type={"date"} name={"end_date"}/>
-      <input type="submit" value="Submit"/>
+      <form className="mb-8 space-x-4" onSubmit={(addTask)}>
+        <input type={"text"} name={"title"} />
+        <input type={"date"} name={"end_date"}/>
+        <input type="submit" value="submit"/>
+      </form>
 
-     </form>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-     {tasks.map((item) => (
+      {tasks.map((item) => (
         <div key={item.id} className="flex gap-4">
-          <input type="checkbox" checked={item.done} />
+          <input type="checkbox" defaultChecked={item.done} onChange={() => (console.log("submit"))} />
           <span>{item.title}</span>
           <span>{item.end_date}</span>
         </div>
-      ))
-     }
-     </div>
+      ))}
+    </div>
   )
 }
